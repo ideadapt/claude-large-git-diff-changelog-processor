@@ -2,10 +2,10 @@ import os
 import json
 
 # Directory containing the output files
-directory = '/home/vic/Projects/changelog_processor/changelog_chunk_processed/'
+directory = './changelog_chunk_processed/'
 
 # Output file to save extracted text
-output_file = 'extracted_texts.txt'
+output_file = 'extracted_texts.md'
 
 # Function to extract text from the JSON data
 def extract_text_from_json(data):

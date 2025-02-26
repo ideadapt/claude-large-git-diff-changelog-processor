@@ -1,6 +1,6 @@
 
-# Large Git Diff Changelog Processor (Antrophic/Claude - claude-3-5-sonnet-20240620)
-### Working as of Aug 20 2024
+# Large Git Diff Changelog Processor (Antrophic/Claude - claude-3-7-sonnet-latest)
+### Working as of Feb 2025
 
 This project provides tools to process and summarize large git diff changelog files by interacting with the Anthropic API. The repository contains two Python scripts:
 
@@ -11,7 +11,7 @@ This project provides tools to process and summarize large git diff changelog fi
 
 [![Watch the video](https://img.youtube.com/vi/_4bHSJDp1wY/0.jpg)](https://www.youtube.com/watch?v=_4bHSJDp1wY)
 
-## Markdown formatted example output (using gpt4 and some prompts)
+## Markdown formatted example output (using Claude Sonnet AI and some prompts)
 
 [![Watch the video](https://img.youtube.com/vi/lASfNaNEYTg/0.jpg)](https://www.youtube.com/watch?v=lASfNaNEYTg)
 

@@ -1,6 +1,7 @@
 import os
 import requests
 import json
+import time
 
 # API settings
 API_KEY = ""
@@ -9,8 +10,15 @@ API_URL = "https://api.anthropic.com/v1/messages"
 # Configuration
 input_file = "changelog.txt"
 output_dir = "changelog_chunk_processed"
-max_chunk_size = 400  # max characters per request - 8000 should work but wasnt tested
-
+# max characters per request
+# 20k tokens, each token roughly 4 characters (according to claudio ai chat)
+# however, heuristics showed, that the ratio is not 1/4 but more 1/2.5
+# depends on the limits of the model & plan
+max_chunk_size = 50000  
+# docs https://docs.anthropic.com/en/docs/about-claude/models/all-models
+model_name = "claude-3-7-sonnet-latest"
+# Request up to 8000 tokens in the response, max of claude sonnet 3.7 model
+max_tokens_response = 8000
 
 
 def chunk_text(text, max_chunk_size):
@@ -35,23 +43,21 @@ def call_anthropic_api(diff_content):
         "x-api-key": API_KEY,
         "Content-Type": "application/json",
         "anthropic-version": "2023-06-01",  # Required version header
-              # Beta header for extended tokens
     }
-    # Construct the prompt with specific instructions for summarizing a git diff
-    prompt = f"Summarize the following git diff content into a concise commit message:\n\n{diff_content}"
+    prompt = f"Perform a code review on the follow git diff. Focus on logic flaws, security issues and naming issues. The code is written in Kotlin or Java.\n\n{diff_content}"
     
     data = {
-        "model": "claude-3-5-sonnet-20240620",  # Use the correct model
+        "model": model_name,
         "messages": [
             {"role": "user", "content": escape_special_characters(prompt)}
         ],
-        "max_tokens": 8192,  # Request up to 8192 tokens in the response
+        "max_tokens": max_tokens_response,
     }
     response = requests.post(API_URL, headers=headers, json=data)
     try:
         response.raise_for_status()
     except requests.exceptions.HTTPError as e:
-        print("Response content:", response.content.decode())  # Print detailed error response
+        print("Response content:", response.content.decode())
         raise
     return response.json()
 
@@ -78,6 +84,11 @@ def process_file(input_file, output_dir):
         with open(output_file, "w", encoding="utf-8") as output:
             output.write(json.dumps(response_text, indent=2))  # Serialize dict to JSON string
         print(f"Result saved to: {output_file}")
+
+        if i + 1 < len(chunks):
+            # sleep for 1 minute, since we have input max nr of tokens per minute in last request
+            print(f"Wait for one minute before processing next chunk ...")
+            time.sleep(61) 
 
 if __name__ == "__main__":
     process_file(input_file, output_dir)
