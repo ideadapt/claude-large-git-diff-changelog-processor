@@ -4,7 +4,7 @@ import json
 import time
 
 # API settings
-API_KEY = ""
+API_KEY = os.environ["CL_API_KEY"]
 API_URL = "https://api.anthropic.com/v1/messages"
 
 # Configuration
